@@ -8,4 +8,4 @@ CREATE TABLE IF NOT EXISTS `metas` (
   PRIMARY KEY (`id`),
   KEY `key` (`key`),
   KEY `object_id` (`foreignKey`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci ROW_FORMAT=DYNAMIC AUTO_INCREMENT=20847 ;
+);
