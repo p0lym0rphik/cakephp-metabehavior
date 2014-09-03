@@ -1,19 +1,60 @@
-CakePHP meta-behavior
-=============
+CakePHP MetaBehavior
+====================
 
-I) Introduction
+### Introduction
 
-Sometimes you can have some cases where your model must have a lot of different attributes, like product object, different field name for the same model or inheritance system.
-Before jumping directly with NoSQL structure there is other solution like metadatas management.
+CakePHP Metabehavior is a meta data Behavior for CakePHP 2. 
+This behavior allows you to store, retrieve and search for metadata about any record for any model within your database. 
 
-II) Methodology
+### Installation
 
-Process is simple, beforeSave callback compare input datas with the current schema and save it in another table. After find callback find metadata and merge width the current model result.
+1. Add the folder on your app/Plugin directory.
 
-III) How to use
+2. Make sure that the Plugin is loaded (check your bootstrap configuration).
 
-Simply declare the Meta Behavior in your model.
+3. Run the following commands:
+<pre>
+cd /path/to/installation/
+app/Console/cake schema create MetaBehavior.metas
+</pre>
 
-class Foo extends Bar{
-  public $actsAs = array("Meta");
-}
+4. Add the behavior to the model you want to use.
+<pre>
+class MyModel extends Model {
+	public $actsAs = array('Meta');
+}</pre>
+
+### How to 
+
+1. Add datas to an object.
+<pre>
+// Just set meta key on the primary request model
+	$savedDatas = $this->request->data;
+	$savedDatas['MyModel']['foo'] = 'bar';
+	
+	$this->MyModel->save($savedDatas);
+</pre>
+
+2. Retrieve datas.
+<pre>// Just launch a find and datas are in the primary model.
+	/**
+	*	return array(
+	*		'MyModel' => array(
+	*			'id' => 1,
+	*			'foo' => 'bar'
+	*		)
+	*   )
+	*/
+	
+	$model = $this->MyModel->findByid(1);
+	
+</pre>
+
+3. You can directly search on meta values.
+<pre>
+	$this->MyModel->find('all',array(
+		'conditions' => array(
+			'MyModel.foo =' => 'bar'
+		)
+	));
+</pre>
