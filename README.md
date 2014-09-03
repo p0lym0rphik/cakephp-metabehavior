@@ -36,18 +36,17 @@ class MyModel extends Model {
 </pre>
 
 2. Retrieve datas.
-<pre>// Just launch a find and datas are in the primary model.
-	/**
-	*	return array(
-	*		'MyModel' => array(
-	*			'id' => 1,
-	*			'foo' => 'bar'
-	*		)
-	*   )
-	*/
-	
+<pre>
+	// Just launch a find and datas are in the primary model.
+
 	$model = $this->MyModel->findByid(1);
 	
+	return array(
+		'MyModel' => array(
+			'id' => 1,
+			'foo' => 'bar'
+		)
+	)	
 </pre>
 
 3. You can directly search on meta values.
