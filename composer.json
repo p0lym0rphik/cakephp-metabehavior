@@ -1,0 +1,29 @@
+{
+	"name": "p0lym0rphik/cakephp-metabehavior",
+	"description": "CakePHP MetaBehavior Plugin, dealing with additional datas",
+	"type": "cakephp-plugin",
+	"keywords": [
+		"cakephp",
+		"metadatas",
+		"metabehavior",
+		"extradata"
+	],
+	"homepage": "https://github.com/p0lym0rphik/cakephp-metabehavior",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Fabien Moreau",
+			"email": "dev@fabienmoreau.com",
+			"homepage": "http://fabienmoreau.com",
+			"role": "Maintainer"
+		}
+	],
+	"require": {
+		"composer/installers": "*"
+	},
+	"support": {
+		"email": "dev@fabienmoreau.com",
+		"issues": "https://github.com/p0lym0rphik/cakephp-metabehavior/issues",
+		"source": "https://github.com/p0lym0rphik/cakephp-metabehavior"
+	}
+}
