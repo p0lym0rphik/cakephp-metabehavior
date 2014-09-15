@@ -4,11 +4,13 @@
  * MetaBehavior CakePHP Plugin
  * @author Moreau Fabien : fmoreau.go@gmail.com
  */
- 
+
 class MetaBehavior extends ModelBehavior {
 
     public $attribute = false;
+
     public $schema = false;
+    
     public $callbackValues = array();
     
     private $__currentJoins = array();
@@ -16,9 +18,9 @@ class MetaBehavior extends ModelBehavior {
     /**
      * MetaBehavior::setup()
      * 
-     * @param mixed $Model
+     * @param Model $Model
      * @param mixed $config
-     * @return void
+     * @return boolean
      */
      
     public function setup(Model $model, $config = array()) {		
@@ -43,14 +45,14 @@ class MetaBehavior extends ModelBehavior {
     public function beforeFind(Model $model, $query = array()) {
         
         # If there is no conditions, it's useless to looking for it !
-        if(!array_key_exists('conditions',$query)){
+        if(!array_key_exists('conditions',$query)) {
             return $query;
         }
         
         # Recursive function to find foreign field and build join table instead
         $query['conditions'] = $this->__replace_conditions($model, $query['conditions']);
         
-        if(array_key_exists('joins',$query)){
+        if(array_key_exists('joins',$query)) {
             $query['joins'] = array_merge($query['joins'], array_values($this->__currentJoins));
         }else{
             $query['joins'] = array_values($this->__currentJoins);
@@ -61,8 +63,8 @@ class MetaBehavior extends ModelBehavior {
     
     private function __replace_conditions(Model $model, $conditions){
     	
-        foreach($conditions as $cKey => $cValue){
-            if(is_array($cValue)){
+        foreach($conditions as $cKey => $cValue) {
+            if(is_array($cValue)) {
                 # If is array, we check recursively
                 $conditions[$cKey] = $this->__replace_conditions($model, $cValue);
             }
@@ -72,13 +74,13 @@ class MetaBehavior extends ModelBehavior {
             # Get the field attach to the condition
             $grep_field = preg_match("/".$model->alias."\.(\w+)/i", $cKey, $match);    
             
-            if($grep_field){
+            if($grep_field) {
                 $field = $match[1];
                 
-                if(!in_array($field, $this->schema)){
+                if(!in_array($field, $this->schema)) {
                     
                     # If the join is not set yet, we build it
-                    if(!array_key_exists($field, $this->__currentJoins)){
+                    if(!array_key_exists($field, $this->__currentJoins)) {
                         $this->__currentJoins[$field] = array(
                             'table' => 'metas',
                             'alias' => $field,
@@ -94,7 +96,7 @@ class MetaBehavior extends ModelBehavior {
                     # Get the compare method
                     $grep_operator = preg_match("/".$field."(.+)$/i", $cKey, $match);
                     
-                    if($grep_operator){
+                    if($grep_operator) {
                         $operator = $match[1];
                     }else{
                         $operator = "";
@@ -120,10 +122,10 @@ class MetaBehavior extends ModelBehavior {
      * @return array Modified results
      */
      
-     public function afterFind(Model $model, $results, $primary = false){
+     public function afterFind(Model $model, $results, $primary = false) {
      	
         # Check if we're in a array of results
-     	if(!empty($results) && isset($results[0][$model->alias])){
+     	if(!empty($results) && isset($results[0][$model->alias])) {
     		$primaryKeys = array();
      		$rangeResults = array();
             
@@ -142,11 +144,11 @@ class MetaBehavior extends ModelBehavior {
             # Sort results table with metas
         	foreach ($list as $l) {
         		$v = $l['Meta']['meta_value'];
-            	$v = (@unserialize($v) !== false) ? unserialize($v) : $v;
+            	$v = ($this->_is_serialized($v)) ? unserialize($v) : $v;
             	$rangeResults[$l['Meta']['foreignKey']][$model->alias][$l['Meta']['meta_key']] = $v; 
         	}
 			
-			if($model->findQueryType == 'first'){
+			if($model->findQueryType == 'first') {
 				return array(0 => array_shift($rangeResults));
 			}
      		
@@ -167,7 +169,7 @@ class MetaBehavior extends ModelBehavior {
     }
 
     public function registerAttribute(Model $model, $row, $value) {
-		if($value != "" && is_array($value)){
+		if($value != "" && is_array($value)) {
             $value = serialize($value);
         }
 
@@ -199,7 +201,7 @@ class MetaBehavior extends ModelBehavior {
         	
         	$previous_values = false;
         	
-        	if(!$created){
+        	if(!$created) {
         		$previous_values = $this->Meta->find('list',array(
         			'conditions' => array('Meta.foreignModel =' => $model->alias, 'Meta.foreignKey =' => $model->id),
         			'fields' => array('meta_key','id')
@@ -209,7 +211,7 @@ class MetaBehavior extends ModelBehavior {
             foreach ($this->callbackValues as $key => $value) {
             	$primary = false;
             	
-            	if(is_array($previous_values) && array_key_exists($key, $previous_values)){
+            	if(is_array($previous_values) && array_key_exists($key, $previous_values)) {
             		$primary = $previous_values[$key];
             	}
             	
@@ -226,4 +228,58 @@ class MetaBehavior extends ModelBehavior {
     public function afterDelete(Model $model) {
         $this->Meta->deleteAll(array('Meta.foreignKey =' => $model->id, 'Meta.foreignModel =' => $model->alias));
     }
+
+    protected function _is_serialized( $data, $strict = true ) {
+        if ( ! is_string( $data ) ) {
+            return false;
+        }
+        $data = trim( $data );
+        if ( 'N;' == $data ) {
+            return true;
+        }
+        if ( strlen( $data ) < 4 ) {
+            return false;
+        }
+        if ( ':' !== $data[1] ) {
+            return false;
+        }
+        if ( $strict ) {
+            $lastc = substr( $data, -1 );
+            if ( ';' !== $lastc && '}' !== $lastc ) {
+                return false;
+            }
+        } else {
+            $semicolon = strpos( $data, ';' );
+            $brace     = strpos( $data, '}' );
+            if ( false === $semicolon && false === $brace )
+                return false;
+
+            if ( false !== $semicolon && $semicolon < 3 )
+                return false;
+
+            if ( false !== $brace && $brace < 4 )
+                return false;
+        }
+
+        $token = $data[0];
+        switch ( $token ) {
+            case 's' :
+                if ( $strict ) {
+                    if ( '"' !== substr( $data, -2, 1 ) ) {
+                        return false;
+                    }
+                } elseif ( false === strpos( $data, '"' ) ) {
+                    return false;
+                }
+            case 'a' :
+            case 'O' :
+                return (bool) preg_match( "/^{$token}:[0-9]+:/s", $data );
+            case 'b' :
+            case 'i' :
+            case 'd' :
+                $end = $strict ? '$' : '';
+                return (bool) preg_match( "/^{$token}:[0-9.E-]+;$end/", $data );
+        }
+        return false;
+    }   
 }
