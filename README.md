@@ -1,4 +1,5 @@
 [![Coverage Status](https://coveralls.io/repos/p0lym0rphik/cakephp-metabehavior/badge.png)](https://coveralls.io/r/p0lym0rphik/cakephp-metabehavior)
+[![Build Status](https://travis-ci.org/p0lym0rphik/cakephp-metabehavior.svg?branch=master)](https://travis-ci.org/p0lym0rphik/cakephp-metabehavior)
 
 CakePHP MetaBehavior
 ====================
