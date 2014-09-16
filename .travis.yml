@@ -18,6 +18,9 @@ matrix:
   include:
     - php: 5.4
       env:
+        - COVERALLS=1
+    - php: 5.4
+      env:
         - PHPCS=1
 
 before_script:
@@ -29,6 +32,6 @@ script:
 
 after_success:
   - ../travis/after_success.sh
-  - coveralls
+
 notifications:
   email: false
