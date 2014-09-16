@@ -1,7 +1,7 @@
 <?php
 /**
- * MetaBehavior CakePHP Plugin
- * @author Moreau Fabien : dev@fabienmoreau.com
+ *  MetaBehavior CakePHP Plugin
+ *  @author Moreau Fabien : dev@fabienmoreau.com
  */
 
 class MetaBehavior extends ModelBehavior {
@@ -15,11 +15,11 @@ class MetaBehavior extends ModelBehavior {
 	private $__currentJoins = array();
 
 	/**
-	* MetaBehavior::setup()
-	* 
-	* @param Model $model
-	* @param array $config
-	* @return boolean
+	*  MetaBehavior::setup()
+	*
+	*  @param Model $model is being run
+	*  @param array $config for model
+	*  @return boolean setup status
 	*/
 
 	public function setup(Model $model, $config = array()) {
@@ -31,23 +31,23 @@ class MetaBehavior extends ModelBehavior {
 	}
 
 	/**
-	 * beforeFind Callback
-	 *
-	 * @param Model $model Model find is being run on.
-	 * @param array $query Array of Query parameters.
-	 * @return array Modified query
-	 */
+	*  beforeFind Callback
+	*
+	*  @param Model $model Model find is being run on.
+	*  @param array $query Array of Query parameters.
+	*  @return array Modified query
+	*/
 
 	public function beforeFind(Model $model, $query = array()) {
-	
-		# If there is no conditions, it's useless to looking for it !
+
+		// If there is no conditions, it's useless to looking for it !
 		if (!array_key_exists('conditions',$query)) {
 			return $query;
 		}
-		
-		# Recursive function to find foreign field and build join table instead
+
+		// Recursive function to find foreign field and build join table instead
 		$query['conditions'] = $this->__replace_conditions($model, $query['conditions']);
-		
+
 		if (array_key_exists('joins',$query)) {
 			$query['joins'] = array_merge($query['joins'], array_values($this->__currentJoins));
 		} else {
@@ -58,14 +58,16 @@ class MetaBehavior extends ModelBehavior {
 	}
 
 	/**
-	 * Replace condition function
-	 * Walk recursively to change meta value by join alias
-	 * @param Model $model Model find is being run on.
-	 * @param array $conditions Array of conditions query parameters.
-	 * @return array Modified conditions
-	 */
+	*  Replace condition function
+	*
+	*  Walk recursively to change meta value by join alias
+	*
+	*  @param Model $model Model find is being run on.
+	*  @param array $conditions Array of conditions query parameters.
+	*  @return array Modified conditions
+	*/
 
-	private function __replace_conditions(Model $model, $conditions){
+	private function __replace_conditions(Model $model, $conditions) {
 
 		foreach ($conditions as $cKey => $cValue) {
 			if (is_array($cValue)) {
@@ -118,12 +120,12 @@ class MetaBehavior extends ModelBehavior {
 	}
 
 	/**
-	 * afterFind Callback
+	 *  afterFind Callback
 	 *
-	 * @param Model $model Model find was run on
-	 * @param array $results Array of model results.
-	 * @param boolean $primary Did the find originate on $model.
-	 * @return array Modified results
+	 *  @param Model $model Model find was run on
+	 *  @param array $results Array of model results.
+	 *  @param boolean $primary Did the find originate on $model.
+	 *  @return array Modified results
 	 */
 
 	public function afterFind(Model $model, $results, $primary = false) {
@@ -163,11 +165,11 @@ class MetaBehavior extends ModelBehavior {
 	}
 
 	/**
-	 * beforeSave Callback
+	 *  beforeSave Callback
 	 *
-	 * @param Model $model Model find was run on
-	 * @param array $options Array of saving options.
-	 * @return boolean status for continue save action
+	 *  @param Model $model Model find was run on
+	 *  @param array $options Array of saving options.
+	 *  @return boolean status for continue save action
 	 */
 
 	public function beforeSave(Model $model, $options = array()) {
@@ -181,12 +183,14 @@ class MetaBehavior extends ModelBehavior {
 	}
 
 	/**
-	 * registerAttribute function
-	 * Convert data to persist
-	 * @param Model $model Model find was run on
-	 * @param string $row string with meta key.
-	 * @param mixed $value to store.
-	 * @return boolean result
+	 *  registerAttribute function
+	 *
+	 *  Convert data to persist
+	 *
+	 *  @param Model $model Model find was run on
+	 *  @param string $row string with meta key.
+	 *  @param mixed $value to store.
+	 *  @return boolean result
 	 */
 
 	public function registerAttribute(Model $model, $row, $value) {
@@ -200,14 +204,16 @@ class MetaBehavior extends ModelBehavior {
 	}
 
 	/**
-	 * setAttribute function
-	 * Prepare datas to persist
-	 * @param Model $model Model find was run on
-	 * @param integer $foreignKey of the current model.
-	 * @param string $key meta identifier.
-	 * @param string $value meta to store
-	 * @param boolean $primaryKey if add/editing value
-	 * @return array attribute to persist
+	 *  setAttribute function
+	 *
+	 *  Prepare datas to persist
+	 *
+	 *  @param Model $model Model find was run on
+	 *  @param integer $foreignKey of the current model.
+	 *  @param string $key meta identifier.
+	 *  @param string $value meta to store
+	 *  @param boolean $primaryKey if add/editing value
+	 *  @return array attribute to persist
 	 */
 
 	public function setAttribute(Model $model, $foreignKey, $key, $value, $primaryKey = false) {
@@ -227,12 +233,14 @@ class MetaBehavior extends ModelBehavior {
 	}
 
 	/**
-	 * afterSave callback
-	 * Transaction to database
-	 * @param Model $model Model find was run on
-	 * @param boolean $created if add/edit
-	 * @param array $options for saving configuration
-	 * @return void
+	 *  afterSave callback
+	 *
+	 *  Transaction to database
+	 *
+	 *  @param Model $model Model find was run on
+	 *  @param boolean $created if add/edit
+	 *  @param array $options for saving configuration
+	 *  @return void
 	 */
 
 	public function afterSave(Model $model, $created, $options = array()) {
@@ -266,10 +274,12 @@ class MetaBehavior extends ModelBehavior {
 	}
 
 	/**
-	 * afterDelete callback
-	 * Delete associate values of the primary model
-	 * @param Model $model Model find was run on
-	 * @return void
+	 *  afterDelete callback
+	 *
+	 *  Delete associate values of the primary model
+	 *
+	 *  @param Model $model Model find was run on
+	 *  @return void
 	 */
 
 	public function afterDelete(Model $model) {
@@ -277,12 +287,14 @@ class MetaBehavior extends ModelBehavior {
 	}
 
 	/**
-	* _is_serialized function (protected)
-	* Utility function to check if a string is serialized without generating exceptions
-	* @param Model $model Model find was run on
-	* @param mixed $data to check
-	* @param boolean $strict to set the mode
-	* @return boolean result
+	*  _is_serialized function (protected)
+	*
+	*  Utility function to check if a string is serialized without generating exceptions
+	*
+	*  @param Model $model Model find was run on
+	*  @param mixed $data to check
+	*  @param boolean $strict to set the mode
+	*  @return boolean result
 	*/
 
 	protected function _is_serialized(Model $model, $data, $strict = true ) {
@@ -337,5 +349,5 @@ class MetaBehavior extends ModelBehavior {
 				return (bool) preg_match( "/^{$token}:[0-9.E-]+;$end/", $data );
 		}
 		return false;
-	}   
+	}
 }
