@@ -9,7 +9,7 @@
 		"extradata"
 	],
 	"homepage": "https://github.com/p0lym0rphik/cakephp-metabehavior",
-	"license": "MIT",
+	"license": "GPL-2.0",
 	"authors": [
 		{
 			"name": "Fabien Moreau",
